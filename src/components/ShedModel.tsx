@@ -52,6 +52,35 @@ export const ShedModel = ({ config }: ShedModelProps) => {
 
   const windows = getWindowConfig();
 
+  // Create vertical planks for walls
+  const createVerticalPlanks = (wallWidth: number, wallHeight: number, position: [number, number, number], rotation: [number, number, number] = [0, 0, 0]) => {
+    const plankWidth = 0.15;
+    const plankThickness = 0.05;
+    const numPlanks = Math.floor(wallWidth / plankWidth);
+    const planks = [];
+
+    for (let i = 0; i < numPlanks; i++) {
+      const xOffset = (i - numPlanks / 2) * plankWidth + plankWidth / 2;
+      planks.push(
+        <mesh
+          key={i}
+          position={[position[0] + xOffset, position[1], position[2]]}
+          rotation={rotation}
+          castShadow
+          receiveShadow
+        >
+          <boxGeometry args={[plankWidth * 0.9, wallHeight, plankThickness]} />
+          <meshStandardMaterial 
+            color="#a87c56"
+            roughness={0.9}
+            metalness={0.1}
+          />
+        </mesh>
+      );
+    }
+    return planks;
+  };
+
   // Gentle floating animation
   useFrame((state) => {
     if (groupRef.current) {
@@ -69,15 +98,18 @@ export const ShedModel = ({ config }: ShedModelProps) => {
 
       {/* Main shed structure */}
       <group position={[0, height / 2, 0]}>
-        {/* Walls */}
-        <mesh castShadow receiveShadow>
-          <boxGeometry args={[width, height, depth]} />
-          <meshStandardMaterial 
-            color="#8b4513" 
-            roughness={0.8}
-            metalness={0.1}
-          />
-        </mesh>
+        {/* Vertical plank walls */}
+        {/* Front wall */}
+        {createVerticalPlanks(width, height, [0, 0, depth / 2 + 0.025])}
+        
+        {/* Back wall */}
+        {createVerticalPlanks(width, height, [0, 0, -depth / 2 - 0.025])}
+        
+        {/* Right wall */}
+        {createVerticalPlanks(depth, height, [width / 2 + 0.025, 0, 0], [0, Math.PI / 2, 0])}
+        
+        {/* Left wall */}
+        {createVerticalPlanks(depth, height, [-width / 2 - 0.025, 0, 0], [0, Math.PI / 2, 0])}
 
         {/* Two-slope roof */}
         <group position={[0, height / 2 + 0.2, 0]}>
@@ -106,14 +138,18 @@ export const ShedModel = ({ config }: ShedModelProps) => {
           </mesh>
         </group>
 
-        {/* Door */}
-        <mesh position={[-width / 2 + 0.01, -height / 4, 0]} castShadow>
-          <boxGeometry args={[0.02, height * 0.8, 1.2]} />
-          <meshStandardMaterial color="#654321" />
+        {/* Door on front wall */}
+        <mesh position={[0, -height / 4, depth / 2 + 0.03]} castShadow>
+          <boxGeometry args={[1.2, height * 0.8, 0.02]} />
+          <meshStandardMaterial 
+            color="#8b4513"
+            roughness={0.8}
+            metalness={0.1}
+          />
         </mesh>
 
         {/* Door handle */}
-        <mesh position={[-width / 2 + 0.05, -height / 4, 0.4]}>
+        <mesh position={[0.4, -height / 4, depth / 2 + 0.05]}>
           <sphereGeometry args={[0.05]} />
           <meshStandardMaterial color="#ffd700" metalness={0.8} roughness={0.2} />
         </mesh>
