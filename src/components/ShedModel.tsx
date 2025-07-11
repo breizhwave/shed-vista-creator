@@ -17,9 +17,9 @@ export const ShedModel = ({ config }: ShedModelProps) => {
       case 'small':
         return { width: 3, height: 2.5, depth: 2 };
       case 'medium':
-        return { width: 4, height: 3, depth: 3 };
+        return { width: 4, height: 2.5, depth: 3 };
       case 'large':
-        return { width: 5, height: 3.5, depth: 4 };
+        return { width: 5, height: 2.5, depth: 4 };
     }
   };
 
@@ -60,11 +60,18 @@ export const ShedModel = ({ config }: ShedModelProps) => {
     const planks = [];
 
     for (let i = 0; i < numPlanks; i++) {
-      const xOffset = (i - numPlanks / 2) * plankWidth + plankWidth / 2;
+      let xOffset = (i - numPlanks / 2) * plankWidth + plankWidth / 2;
+      let zOffset=0
+      if( rotation[1]>0)
+      {
+        zOffset=xOffset;
+        xOffset=0;
+
+      }
       planks.push(
         <mesh
           key={i}
-          position={[position[0] + xOffset, position[1], position[2]]}
+          position={[position[0] + xOffset, position[1], position[2]+zOffset]}
           rotation={rotation}
           castShadow
           receiveShadow
@@ -115,7 +122,7 @@ export const ShedModel = ({ config }: ShedModelProps) => {
         <group position={[0, height / 2 + 0.2, 0]}>
           {/* Front slope */}
           <mesh position={[0, 0.2, depth * 0.1]} rotation={[Math.PI * 0.15, 0, 0]} castShadow>
-            <boxGeometry args={[width * 0.8, 0.05, depth * 0.6]} />
+            <boxGeometry args={[width  , 0.05, depth ]} />
             <meshStandardMaterial 
               color="#654321" 
               roughness={0.9}
@@ -124,7 +131,7 @@ export const ShedModel = ({ config }: ShedModelProps) => {
           </mesh>
           {/* Back slope */}
           <mesh position={[0, 0.2, -depth * 0.1]} rotation={[-Math.PI * 0.15, 0, 0]} castShadow>
-            <boxGeometry args={[width * 0.8, 0.05, depth * 0.6]} />
+            <boxGeometry args={[width , 0.05, depth ]} />
             <meshStandardMaterial 
               color="#654321" 
               roughness={0.9}
