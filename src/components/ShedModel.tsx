@@ -25,7 +25,7 @@ export const ShedModel = ({ config }: ShedModelProps) => {
 
   const { width, height, depth } = getDimensions();
 
-  // Get window configuration
+  // Get window configuration for side walls
   const getWindowConfig = () => {
     const windowWidth = 0.8;
     const windowHeight = 0.6;
@@ -35,17 +35,17 @@ export const ShedModel = ({ config }: ShedModelProps) => {
       case 'none':
         return [];
       case 'single':
-        return [{ x: 0, y: windowY, z: depth / 2 + 0.01 }];
+        return [{ x: width / 2 + 0.01, y: windowY, z: 0 }]; // Right side
       case 'double':
         return [
-          { x: -width * 0.2, y: windowY, z: depth / 2 + 0.01 },
-          { x: width * 0.2, y: windowY, z: depth / 2 + 0.01 }
+          { x: width / 2 + 0.01, y: windowY, z: 0 }, // Right side
+          { x: -width / 2 - 0.01, y: windowY, z: 0 } // Left side
         ];
       case 'triple':
         return [
-          { x: -width * 0.25, y: windowY, z: depth / 2 + 0.01 },
-          { x: 0, y: windowY, z: depth / 2 + 0.01 },
-          { x: width * 0.25, y: windowY, z: depth / 2 + 0.01 }
+          { x: width / 2 + 0.01, y: windowY, z: depth * 0.2 }, // Right side front
+          { x: width / 2 + 0.01, y: windowY, z: -depth * 0.2 }, // Right side back
+          { x: -width / 2 - 0.01, y: windowY, z: 0 } // Left side center
         ];
     }
   };
@@ -118,17 +118,17 @@ export const ShedModel = ({ config }: ShedModelProps) => {
           <meshStandardMaterial color="#ffd700" metalness={0.8} roughness={0.2} />
         </mesh>
 
-        {/* Windows */}
+        {/* Windows on side walls */}
         {windows.map((window, index) => (
           <group key={index} position={[window.x, window.y, window.z]}>
             {/* Window frame */}
-            <mesh castShadow>
-              <boxGeometry args={[0.8, 0.6, 0.1]} />
+            <mesh castShadow rotation={window.x > 0 ? [0, Math.PI / 2, 0] : [0, -Math.PI / 2, 0]}>
+              <boxGeometry args={[0.1, 0.6, 0.8]} />
               <meshStandardMaterial color="#654321" />
             </mesh>
             {/* Window glass */}
-            <mesh position={[0, 0, 0.02]}>
-              <boxGeometry args={[0.7, 0.5, 0.02]} />
+            <mesh position={window.x > 0 ? [-0.02, 0, 0] : [0.02, 0, 0]} rotation={window.x > 0 ? [0, Math.PI / 2, 0] : [0, -Math.PI / 2, 0]}>
+              <boxGeometry args={[0.02, 0.5, 0.7]} />
               <meshStandardMaterial 
                 color="#87ceeb" 
                 transparent 
@@ -137,13 +137,14 @@ export const ShedModel = ({ config }: ShedModelProps) => {
                 roughness={0.1}
               />
             </mesh>
-            {/* Window cross */}
-            <mesh position={[0, 0, 0.03]}>
+            {/* Window cross - vertical */}
+            <mesh position={window.x > 0 ? [-0.03, 0, 0] : [0.03, 0, 0]} rotation={window.x > 0 ? [0, Math.PI / 2, 0] : [0, -Math.PI / 2, 0]}>
               <boxGeometry args={[0.02, 0.5, 0.02]} />
               <meshStandardMaterial color="#654321" />
             </mesh>
-            <mesh position={[0, 0, 0.03]}>
-              <boxGeometry args={[0.7, 0.02, 0.02]} />
+            {/* Window cross - horizontal */}
+            <mesh position={window.x > 0 ? [-0.03, 0, 0] : [0.03, 0, 0]} rotation={window.x > 0 ? [0, Math.PI / 2, 0] : [0, -Math.PI / 2, 0]}>
+              <boxGeometry args={[0.02, 0.02, 0.7]} />
               <meshStandardMaterial color="#654321" />
             </mesh>
           </group>
