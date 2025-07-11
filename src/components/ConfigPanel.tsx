@@ -81,7 +81,7 @@ export const ConfigPanel = ({ config, setConfig }: ConfigPanelProps) => {
                       <Button
                         key={option.value}
                         variant={config.size === option.value ? "default" : "outline"}
-                        className={`h-auto p-3 flex flex-col items-center gap-1 transition-all duration-200 text-xs ${
+                        className={`h-16 p-2 flex flex-col items-center gap-1 transition-all duration-200 text-xs ${
                           config.size === option.value 
                             ? "bg-amber-600 hover:bg-amber-700 text-white border-amber-600" 
                             : "hover:bg-amber-50 hover:border-amber-300"

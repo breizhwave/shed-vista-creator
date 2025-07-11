@@ -79,15 +79,32 @@ export const ShedModel = ({ config }: ShedModelProps) => {
           />
         </mesh>
 
-        {/* Roof */}
-        <mesh position={[0, height / 2 + 0.3, 0]} castShadow>
-          <coneGeometry args={[width * 0.7, 0.8, 4]} />
-          <meshStandardMaterial 
-            color="#654321" 
-            roughness={0.9}
-            metalness={0.1}
-          />
-        </mesh>
+        {/* Two-slope roof */}
+        <group position={[0, height / 2 + 0.2, 0]}>
+          {/* Front slope */}
+          <mesh position={[0, 0.2, depth * 0.1]} rotation={[Math.PI * 0.15, 0, 0]} castShadow>
+            <boxGeometry args={[width * 0.8, 0.05, depth * 0.6]} />
+            <meshStandardMaterial 
+              color="#654321" 
+              roughness={0.9}
+              metalness={0.1}
+            />
+          </mesh>
+          {/* Back slope */}
+          <mesh position={[0, 0.2, -depth * 0.1]} rotation={[-Math.PI * 0.15, 0, 0]} castShadow>
+            <boxGeometry args={[width * 0.8, 0.05, depth * 0.6]} />
+            <meshStandardMaterial 
+              color="#654321" 
+              roughness={0.9}
+              metalness={0.1}
+            />
+          </mesh>
+          {/* Ridge beam */}
+          <mesh position={[0, 0.3, 0]} castShadow>
+            <boxGeometry args={[width * 0.8, 0.1, 0.1]} />
+            <meshStandardMaterial color="#5a3c1a" />
+          </mesh>
+        </group>
 
         {/* Door */}
         <mesh position={[-width / 2 + 0.01, -height / 4, 0]} castShadow>
