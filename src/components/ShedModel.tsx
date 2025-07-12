@@ -1,3 +1,4 @@
+
 import { useRef } from 'react';
 import { Group, Mesh } from 'three';
 import { useFrame } from '@react-three/fiber';
@@ -100,7 +101,21 @@ export const ShedModel = ({ config }: ShedModelProps) => {
     return Math.max(baseHeight + heightAddition, baseHeight * 0.8); // Minimum 80% of base height
   };
 
-  // Create vertical planks for walls with roof-adjusted heights
+  // Calculate triangular cap height to reach roof
+  const calculateTriangleCapHeight = (zPosition: number) => {
+    const roofSlope = Math.tan(roofConfig.roofAngle);
+    const distanceFromCenter = Math.abs(zPosition);
+    const maxDistanceFromCenter = depth / 2;
+    
+    // Height difference between plank top and roof at this position
+    const roofHeightAtPosition = roofConfig.roofY + roofConfig.slopeY + (maxDistanceFromCenter - distanceFromCenter) * roofSlope * 0.3;
+    const plankHeight = calculatePlankHeight(zPosition);
+    const plankTopY = height / 2 + (plankHeight - height) / 2 + plankHeight / 2;
+    
+    return Math.max(roofHeightAtPosition - plankTopY, 0.05); // Minimum cap height
+  };
+
+  // Create vertical planks for walls with roof-adjusted heights and triangular caps
   const createVerticalPlanks = (wallWidth: number, wallHeight: number, position: [number, number, number], rotation: [number, number, number] = [0, 0, 0]) => {
     const plankWidth = 0.15;
     const plankThickness = 0.05;
@@ -111,24 +126,29 @@ export const ShedModel = ({ config }: ShedModelProps) => {
       let xOffset = (i - numPlanks / 2) * plankWidth + plankWidth / 2;
       let zOffset = 0;
       let actualPlankHeight = wallHeight;
+      let triangleCapHeight = 0;
       
       if (rotation[1] > 0) {
         zOffset = xOffset;
         xOffset = 0;
         // For side walls, adjust height based on Z position
         actualPlankHeight = calculatePlankHeight(position[2] + zOffset);
+        triangleCapHeight = calculateTriangleCapHeight(position[2] + zOffset);
       } else {
         // For front/back walls, adjust height based on distance from center
         if (position[2] > 0) { // Front wall
           actualPlankHeight = calculatePlankHeight(position[2], false);
+          triangleCapHeight = calculateTriangleCapHeight(position[2]);
         } else { // Back wall
           actualPlankHeight = calculatePlankHeight(position[2], true);
+          triangleCapHeight = calculateTriangleCapHeight(position[2]);
         }
       }
 
       // Adjust Y position to account for varying plank heights
       const yAdjustment = (actualPlankHeight - wallHeight) / 2;
 
+      // Main rectangular plank
       planks.push(
         <mesh
           key={i}
@@ -145,6 +165,27 @@ export const ShedModel = ({ config }: ShedModelProps) => {
           />
         </mesh>
       );
+
+      // Triangular cap piece on top of plank
+      if (triangleCapHeight > 0.05) {
+        const capY = position[1] + yAdjustment + actualPlankHeight / 2 + triangleCapHeight / 2;
+        planks.push(
+          <mesh
+            key={`cap-${i}`}
+            position={[position[0] + xOffset, capY, position[2] + zOffset]}
+            rotation={rotation}
+            castShadow
+            receiveShadow
+          >
+            <boxGeometry args={[plankWidth * 0.9, triangleCapHeight, plankThickness]} />
+            <meshStandardMaterial 
+              color="#a87c56"
+              roughness={0.9}
+              metalness={0.1}
+            />
+          </mesh>
+        );
+      }
     }
     return planks;
   };
@@ -166,7 +207,7 @@ export const ShedModel = ({ config }: ShedModelProps) => {
 
       {/* Main shed structure */}
       <group position={[0, height / 2, 0]}>
-        {/* Vertical plank walls with roof-adjusted heights */}
+        {/* Vertical plank walls with roof-adjusted heights and triangular caps */}
         {/* Front wall */}
         {createVerticalPlanks(width, height, [0, 0, depth / 2 + 0.025])}
         
