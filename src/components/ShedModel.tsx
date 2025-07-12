@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { Group, Mesh } from 'three';
 import { useFrame } from '@react-three/fiber';
@@ -24,6 +23,38 @@ export const ShedModel = ({ config }: ShedModelProps) => {
   };
 
   const { width, height, depth } = getDimensions();
+
+  // Get roof configuration based on size
+  const getRoofConfig = () => {
+    switch (config.size) {
+      case 'small':
+        return { 
+          roofHeight: 0.3, 
+          roofWidth: width + 0.2, 
+          roofDepth: depth/2 + 0.3,
+          roofY: height / 2 + 0.3,
+          slopeY: -0.1 
+        };
+      case 'medium':
+        return { 
+          roofHeight: 0.5, 
+          roofWidth: width + 0.2, 
+          roofDepth: depth/2 + 0.5,
+          roofY: height / 2 + 0.5,
+          slopeY: -0.17 
+        };
+      case 'large':
+        return { 
+          roofHeight: 0.7, 
+          roofWidth: width + 0.3, 
+          roofDepth: depth/2 + 0.7,
+          roofY: height / 2 + 0.7,
+          slopeY: -0.25 
+        };
+    }
+  };
+
+  const roofConfig = getRoofConfig();
 
   // Get window configuration for side walls
   const getWindowConfig = () => {
@@ -118,11 +149,11 @@ export const ShedModel = ({ config }: ShedModelProps) => {
         {/* Left wall */}
         {createVerticalPlanks(depth, height, [-width / 2 - 0.025, 0, 0], [0, Math.PI / 2, 0])}
 
-        {/* Two-slope roof */}
-        <group position={[0, height / 2 + 0.5, 0]}>
+        {/* Two-slope roof - adjusted for each size */}
+        <group position={[0, roofConfig.roofY, 0]}>
           {/* Front slope */}
-          <mesh position={[0, -0.17, depth * 0.29]} rotation={[Math.PI * 0.15, 0, 0]} castShadow>
-            <boxGeometry args={[width  , 0.05, depth/2+0.5 ]} />
+          <mesh position={[0, roofConfig.slopeY, depth * 0.29]} rotation={[Math.PI * 0.15, 0, 0]} castShadow>
+            <boxGeometry args={[roofConfig.roofWidth, 0.05, roofConfig.roofDepth]} />
             <meshStandardMaterial 
               color="#654321" 
               roughness={0.9}
@@ -130,8 +161,8 @@ export const ShedModel = ({ config }: ShedModelProps) => {
             />
           </mesh>
           {/* Back slope */}
-          <mesh position={[0, -0.17 , -depth * 0.29]} rotation={[-Math.PI * 0.15, 0, 0]} castShadow>
-            <boxGeometry args={[width , 0.05,  depth/2+0.5  ]} />
+          <mesh position={[0, roofConfig.slopeY, -depth * 0.29]} rotation={[-Math.PI * 0.15, 0, 0]} castShadow>
+            <boxGeometry args={[roofConfig.roofWidth, 0.05, roofConfig.roofDepth]} />
             <meshStandardMaterial 
               color="#654321" 
               roughness={0.9}
@@ -139,8 +170,8 @@ export const ShedModel = ({ config }: ShedModelProps) => {
             />
           </mesh>
           {/* Ridge beam */}
-          <mesh position={[0, 0.2, 0]} castShadow>
-            <boxGeometry args={[width  , 0.1, 0.1]} />
+          <mesh position={[0, roofConfig.roofHeight * 0.4, 0]} castShadow>
+            <boxGeometry args={[roofConfig.roofWidth, 0.1, 0.1]} />
             <meshStandardMaterial color="#5a3c1a" />
           </mesh>
         </group>
