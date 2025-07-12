@@ -119,10 +119,10 @@ export const ShedModel = ({ config }: ShedModelProps) => {
         {createVerticalPlanks(depth, height, [-width / 2 - 0.025, 0, 0], [0, Math.PI / 2, 0])}
 
         {/* Two-slope roof */}
-        <group position={[0, height / 2 + 0.2, 0]}>
+        <group position={[0, height / 2 + 0.5, 0]}>
           {/* Front slope */}
-          <mesh position={[0, 0.2, depth * 0.1]} rotation={[Math.PI * 0.15, 0, 0]} castShadow>
-            <boxGeometry args={[width  , 0.05, depth ]} />
+          <mesh position={[0, -0.17, depth * 0.29]} rotation={[Math.PI * 0.15, 0, 0]} castShadow>
+            <boxGeometry args={[width  , 0.05, depth/2+0.5 ]} />
             <meshStandardMaterial 
               color="#654321" 
               roughness={0.9}
@@ -130,8 +130,8 @@ export const ShedModel = ({ config }: ShedModelProps) => {
             />
           </mesh>
           {/* Back slope */}
-          <mesh position={[0, 0.2, -depth * 0.1]} rotation={[-Math.PI * 0.15, 0, 0]} castShadow>
-            <boxGeometry args={[width , 0.05, depth ]} />
+          <mesh position={[0, -0.17 , -depth * 0.29]} rotation={[-Math.PI * 0.15, 0, 0]} castShadow>
+            <boxGeometry args={[width , 0.05,  depth/2+0.5  ]} />
             <meshStandardMaterial 
               color="#654321" 
               roughness={0.9}
@@ -139,8 +139,8 @@ export const ShedModel = ({ config }: ShedModelProps) => {
             />
           </mesh>
           {/* Ridge beam */}
-          <mesh position={[0, 0.3, 0]} castShadow>
-            <boxGeometry args={[width * 0.8, 0.1, 0.1]} />
+          <mesh position={[0, 0.2, 0]} castShadow>
+            <boxGeometry args={[width  , 0.1, 0.1]} />
             <meshStandardMaterial color="#5a3c1a" />
           </mesh>
         </group>
@@ -165,12 +165,12 @@ export const ShedModel = ({ config }: ShedModelProps) => {
         {windows.map((window, index) => (
           <group key={index} position={[window.x, window.y, window.z]}>
             {/* Window frame */}
-            <mesh castShadow rotation={window.x > 0 ? [0, Math.PI / 2, 0] : [0, -Math.PI / 2, 0]}>
+            <mesh castShadow rotation={window.x > 0 ? [0, Math.PI  , 0] : [0, -Math.PI  , 0]}>
               <boxGeometry args={[0.1, 0.6, 0.8]} />
               <meshStandardMaterial color="#654321" />
             </mesh>
             {/* Window glass */}
-            <mesh position={window.x > 0 ? [-0.02, 0, 0] : [0.02, 0, 0]} rotation={window.x > 0 ? [0, Math.PI / 2, 0] : [0, -Math.PI / 2, 0]}>
+            <mesh position={window.x > 0 ? [0.05, 0, 0] : [-0.05, 0, 0]} rotation={window.x > 0 ? [0, Math.PI , 0] : [0, -Math.PI  , 0]}>
               <boxGeometry args={[0.02, 0.5, 0.7]} />
               <meshStandardMaterial 
                 color="#87ceeb" 
@@ -181,12 +181,12 @@ export const ShedModel = ({ config }: ShedModelProps) => {
               />
             </mesh>
             {/* Window cross - vertical */}
-            <mesh position={window.x > 0 ? [-0.03, 0, 0] : [0.03, 0, 0]} rotation={window.x > 0 ? [0, Math.PI / 2, 0] : [0, -Math.PI / 2, 0]}>
+            <mesh position={window.x > 0 ? [ 0.06, 0, 0] : [-0.06, 0, 0]} rotation={window.x > 0 ? [0, Math.PI , 0] : [0, -Math.PI  , 0]}>
               <boxGeometry args={[0.02, 0.5, 0.02]} />
               <meshStandardMaterial color="#654321" />
             </mesh>
             {/* Window cross - horizontal */}
-            <mesh position={window.x > 0 ? [-0.03, 0, 0] : [0.03, 0, 0]} rotation={window.x > 0 ? [0, Math.PI / 2, 0] : [0, -Math.PI / 2, 0]}>
+            <mesh position={window.x > 0 ? [ 0.06, 0, 0] : [-0.06, 0, 0]} rotation={window.x > 0 ? [0, Math.PI  , 0] : [0, -Math.PI  , 0]}>
               <boxGeometry args={[0.02, 0.02, 0.7]} />
               <meshStandardMaterial color="#654321" />
             </mesh>
