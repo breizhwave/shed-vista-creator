@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { Group, Mesh } from 'three';
 import { useFrame } from '@react-three/fiber';
@@ -94,10 +93,11 @@ export const ShedModel = ({ config }: ShedModelProps) => {
     const distanceFromCenter = Math.abs(zPosition);
     const maxDistanceFromCenter = depth / 2;
     
-    // Calculate how much to trim based on distance from center and roof slope
-    const trimAmount = (maxDistanceFromCenter - distanceFromCenter) * roofSlope * 0.8;
+    // Calculate how much to add based on distance from edge and roof slope
+    // Planks are tallest at center (z=0) and shortest at edges (z=±depth/2)
+    const heightAddition = (maxDistanceFromCenter - distanceFromCenter) * roofSlope * 0.8;
     
-    return Math.max(baseHeight - trimAmount, baseHeight * 0.7); // Minimum 70% of base height
+    return Math.max(baseHeight + heightAddition, baseHeight * 0.8); // Minimum 80% of base height
   };
 
   // Create vertical planks for walls with roof-adjusted heights
@@ -119,7 +119,6 @@ export const ShedModel = ({ config }: ShedModelProps) => {
         actualPlankHeight = calculatePlankHeight(position[2] + zOffset);
       } else {
         // For front/back walls, adjust height based on distance from center
-        const distanceFromCenter = Math.abs(zOffset);
         if (position[2] > 0) { // Front wall
           actualPlankHeight = calculatePlankHeight(position[2], false);
         } else { // Back wall
@@ -128,12 +127,12 @@ export const ShedModel = ({ config }: ShedModelProps) => {
       }
 
       // Adjust Y position to account for varying plank heights
-      const yAdjustment = (wallHeight - actualPlankHeight) / 2;
+      const yAdjustment = (actualPlankHeight - wallHeight) / 2;
 
       planks.push(
         <mesh
           key={i}
-          position={[position[0] + xOffset, position[1] - yAdjustment, position[2] + zOffset]}
+          position={[position[0] + xOffset, position[1] + yAdjustment, position[2] + zOffset]}
           rotation={rotation}
           castShadow
           receiveShadow
