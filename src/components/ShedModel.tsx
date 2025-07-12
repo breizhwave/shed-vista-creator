@@ -1,3 +1,4 @@
+
 import { useRef } from 'react';
 import { Group, Mesh } from 'three';
 import { useFrame } from '@react-three/fiber';
@@ -33,7 +34,8 @@ export const ShedModel = ({ config }: ShedModelProps) => {
           roofWidth: width + 0.2, 
           roofDepth: depth/2 + 0.3,
           roofY: height / 2 + 0.3,
-          slopeY: -0.1 
+          slopeY: -0.1,
+          roofAngle: Math.PI * 0.15
         };
       case 'medium':
         return { 
@@ -41,7 +43,8 @@ export const ShedModel = ({ config }: ShedModelProps) => {
           roofWidth: width + 0.2, 
           roofDepth: depth/2 + 0.5,
           roofY: height / 2 + 0.5,
-          slopeY: -0.17 
+          slopeY: -0.17,
+          roofAngle: Math.PI * 0.15
         };
       case 'large':
         return { 
@@ -49,7 +52,8 @@ export const ShedModel = ({ config }: ShedModelProps) => {
           roofWidth: width + 0.3, 
           roofDepth: depth/2 + 0.7,
           roofY: height / 2 + 0.7,
-          slopeY: -0.25 
+          slopeY: -0.25,
+          roofAngle: Math.PI * 0.15
         };
     }
   };
@@ -83,7 +87,20 @@ export const ShedModel = ({ config }: ShedModelProps) => {
 
   const windows = getWindowConfig();
 
-  // Create vertical planks for walls
+  // Calculate plank height based on roof slope and position
+  const calculatePlankHeight = (zPosition: number, isBackWall: boolean = false) => {
+    const baseHeight = height;
+    const roofSlope = Math.tan(roofConfig.roofAngle);
+    const distanceFromCenter = Math.abs(zPosition);
+    const maxDistanceFromCenter = depth / 2;
+    
+    // Calculate how much to trim based on distance from center and roof slope
+    const trimAmount = (maxDistanceFromCenter - distanceFromCenter) * roofSlope * 0.8;
+    
+    return Math.max(baseHeight - trimAmount, baseHeight * 0.7); // Minimum 70% of base height
+  };
+
+  // Create vertical planks for walls with roof-adjusted heights
   const createVerticalPlanks = (wallWidth: number, wallHeight: number, position: [number, number, number], rotation: [number, number, number] = [0, 0, 0]) => {
     const plankWidth = 0.15;
     const plankThickness = 0.05;
@@ -92,22 +109,36 @@ export const ShedModel = ({ config }: ShedModelProps) => {
 
     for (let i = 0; i < numPlanks; i++) {
       let xOffset = (i - numPlanks / 2) * plankWidth + plankWidth / 2;
-      let zOffset=0
-      if( rotation[1]>0)
-      {
-        zOffset=xOffset;
-        xOffset=0;
-
+      let zOffset = 0;
+      let actualPlankHeight = wallHeight;
+      
+      if (rotation[1] > 0) {
+        zOffset = xOffset;
+        xOffset = 0;
+        // For side walls, adjust height based on Z position
+        actualPlankHeight = calculatePlankHeight(position[2] + zOffset);
+      } else {
+        // For front/back walls, adjust height based on distance from center
+        const distanceFromCenter = Math.abs(zOffset);
+        if (position[2] > 0) { // Front wall
+          actualPlankHeight = calculatePlankHeight(position[2], false);
+        } else { // Back wall
+          actualPlankHeight = calculatePlankHeight(position[2], true);
+        }
       }
+
+      // Adjust Y position to account for varying plank heights
+      const yAdjustment = (wallHeight - actualPlankHeight) / 2;
+
       planks.push(
         <mesh
           key={i}
-          position={[position[0] + xOffset, position[1], position[2]+zOffset]}
+          position={[position[0] + xOffset, position[1] - yAdjustment, position[2] + zOffset]}
           rotation={rotation}
           castShadow
           receiveShadow
         >
-          <boxGeometry args={[plankWidth * 0.9, wallHeight, plankThickness]} />
+          <boxGeometry args={[plankWidth * 0.9, actualPlankHeight, plankThickness]} />
           <meshStandardMaterial 
             color="#a87c56"
             roughness={0.9}
@@ -136,7 +167,7 @@ export const ShedModel = ({ config }: ShedModelProps) => {
 
       {/* Main shed structure */}
       <group position={[0, height / 2, 0]}>
-        {/* Vertical plank walls */}
+        {/* Vertical plank walls with roof-adjusted heights */}
         {/* Front wall */}
         {createVerticalPlanks(width, height, [0, 0, depth / 2 + 0.025])}
         
