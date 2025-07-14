@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Home, Square, Maximize, Eye, EyeOff, ChevronUp, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
-import { ShedConfig } from '../pages/Index';
+import { ShedConfig } from '../types/shed';
 
 interface ConfigPanelProps {
   config: ShedConfig;

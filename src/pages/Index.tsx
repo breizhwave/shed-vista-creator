@@ -4,11 +4,7 @@ import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import { useState } from 'react';
 import { ShedModel } from '../components/ShedModel';
 import { ConfigPanel } from '../components/ConfigPanel';
-
-export type ShedConfig = {
-  size: 'small' | 'medium' | 'large';
-  windows: 'none' | 'single' | 'double' | 'triple';
-};
+import { ShedConfig } from '../types/shed';
 
 const Index = () => {
   const [config, setConfig] = useState<ShedConfig>({
