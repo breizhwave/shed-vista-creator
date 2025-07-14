@@ -1,7 +1,8 @@
 
 import { useRef } from 'react';
 import { Group, Mesh } from 'three';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useLoader } from '@react-three/fiber';
+import { TextureLoader } from 'three';
 import { ShedConfig } from '../pages/Index';
 
 interface ShedModelProps {
@@ -10,6 +11,13 @@ interface ShedModelProps {
 
 export const ShedModel = ({ config }: ShedModelProps) => {
   const groupRef = useRef<Group>(null);
+  
+  // Load wood texture
+  const woodTexture = useLoader(TextureLoader, '/lovable-uploads/cfe6db52-b186-418f-b439-e440ab516521.png');
+  
+  // Configure texture for wood planks
+  woodTexture.wrapS = woodTexture.wrapT = 1000; // RepeatWrapping
+  woodTexture.repeat.set(1, 4); // Repeat vertically for plank effect
 
   // Get dimensions based on size
   const getDimensions = () => {
@@ -159,7 +167,7 @@ export const ShedModel = ({ config }: ShedModelProps) => {
         >
           <boxGeometry args={[plankWidth * 0.9, actualPlankHeight, plankThickness]} />
           <meshStandardMaterial 
-            color="#a87c56"
+            map={woodTexture}
             roughness={0.9}
             metalness={0.1}
           />
@@ -179,7 +187,7 @@ export const ShedModel = ({ config }: ShedModelProps) => {
           >
             <boxGeometry args={[plankWidth * 0.9, triangleCapHeight, plankThickness]} />
             <meshStandardMaterial 
-              color="#a87c56"
+              map={woodTexture}
               roughness={0.9}
               metalness={0.1}
             />
