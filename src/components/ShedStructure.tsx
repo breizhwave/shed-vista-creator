@@ -40,7 +40,7 @@ export const ShedStructure = ({ dimensions, roofConfig, windows, config }: ShedS
       </group>
 
       {/* Door on front wall */}
-      <mesh position={[0, -height / 4, depth / 2 + 0.03]} castShadow>
+      <mesh position={[0, -height / 4, depth / 2 + 0.08]} castShadow>
         <boxGeometry args={[1.2, height * 0.8, 0.02]} />
         <meshStandardMaterial 
           color="#8b4513"
@@ -50,7 +50,7 @@ export const ShedStructure = ({ dimensions, roofConfig, windows, config }: ShedS
       </mesh>
 
       {/* Door handle */}
-      <mesh position={[0.4, -height / 4, depth / 2 + 0.05]}>
+      <mesh position={[0.4, -height / 4+0.22, depth / 2 + 0.05]}>
         <sphereGeometry args={[0.05]} />
         <meshStandardMaterial color="#ffd700" metalness={0.8} roughness={0.2} />
       </mesh>
