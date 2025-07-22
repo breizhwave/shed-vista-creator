@@ -11,6 +11,9 @@ it was built by LOVABLE AI
 and hosted by vercel at this adress
 https://shed-vista-creator-a8g204kw4-breizhwaves-projects.vercel.app/
 
+my blog entry , more infor about the designing process
+https://webmasterbulletin.net/2025/07/17/the-art-of-prototyping-3d-shed-configurator/
+
 ## tech stack
 
  
