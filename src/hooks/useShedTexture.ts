@@ -7,7 +7,7 @@ export const useShedTexture = (): Texture => {
 
   // Configure texture for wood planks
   woodTexture.wrapS = woodTexture.wrapT = 200; // RepeatWrapping
-  woodTexture.repeat.set(1, 1); // Repeat vertically for plank effect
+  woodTexture.repeat.set(1, 0.2); // Repeat vertically for plank effect
   
   return woodTexture;
 };
