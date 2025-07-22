@@ -1,4 +1,4 @@
-# Welcome to your webmasterbulletin 3D shed configurator
+# Webmasterbulletin 3D shed configurator
 
 ## Project info
 
