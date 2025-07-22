@@ -18,10 +18,11 @@ const Index = () => {
       <div className="absolute top-0 left-0 right-0 z-10 p-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-amber-900 mb-2">
-            Garden Shed Configurator
+            THREEJS Garden Shed Configurator
           </h1>
           <p className="text-amber-700">
             Design your perfect garden shed with customizable size and window options
+            <br/>by <a href="https://webmasterbulletin.net/2025/07/17/the-art-of-prototyping-3d-shed-configurator/">ERWAN PIA / WEBMASTERBULLETIN AI</a>
           </p>
         </div>
       </div>
